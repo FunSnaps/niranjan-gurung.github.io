@@ -15,7 +15,8 @@
     w: 20,                  // width dimensions
     h: 20,                  // height dimensions
     x: 50,                  // x coords
-    y: cHeight/2            // y coords
+    y: cHeight/2,           // y coords
+    speed: 1.0              // player speed
   };
 
   // car object
@@ -44,28 +45,56 @@
   window.requestAnimationFrame(gameLoop);
   
   function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);   
     car.y+=1.0;
 
     drawItem(player);
     drawItem(car);
+    movePlayer();
 
     window.requestAnimationFrame(gameLoop);
   }
+  
+  /* keyboard inputs: */
+  // bool values to trigger direction
+  let up    = false;
+  let down  = false;
+  let left  = false;
+  let right = false;
 
-  // keyboard inputs:
+  function movePlayer() {
+    if (up) 
+      player.y-=player.speed;
+    if (down) 
+      player.y+=player.speed;
+    if (right) 
+      player.x+=player.speed;
+    if (left) 
+      player.x-=player.speed;
+  }
+
+  // key press
   document.addEventListener('keydown', function (ev) {
-    if (ev.key === "ArrowUp") {
-      player.y-=5;
-    } else if (ev.key === "ArrowRight") {
-      player.x+=5;
-    } else if (ev.key === "ArrowDown") {
-      player.y+=5;
-    } else if (ev.key === "ArrowLeft") {
-      player.x-=5;
-    }
-    //console.log(ev);
+    if (ev.key === "ArrowUp") 
+      up = true;
+    if (ev.key === "ArrowDown") 
+      down = true;
+    if (ev.key === "ArrowRight") 
+      right = true;
+    if (ev.key === "ArrowLeft")
+      left = true;
   });
-
+  
+  // key release
+  document.addEventListener('keyup', function (ev) {
+    if (ev.key === "ArrowUp") 
+      up = false;
+    if (ev.key === "ArrowDown") 
+      down = false;
+    if (ev.key === "ArrowRight") 
+      right = false;
+    if (ev.key === "ArrowLeft") 
+      left = false;
+  });
 
 })();
