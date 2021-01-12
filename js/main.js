@@ -6,7 +6,7 @@
   const cWidth  = canvas.width;
   const cHeight = canvas.height;
 
-  /* Objects Declaration: */
+  /************** Objects Declaration: **************/
   // player object
   const player = {
     lw: 2,                  // line weight
@@ -18,18 +18,32 @@
     y: cHeight/2,           // y coords
     speed: 1.0              // player speed
   };
-
-  // car object
-  const car = {
-    lw: 2,                  
-    stroke: 'black',         
-    fill: 'red',       
-    w: 15,                 
-    h: 50,                  
-    x: cWidth/2,                  
-    y: -50
+  
+  // enemy entity
+  class Enemy {
+    constructor(lw, stroke, fill, w, h, x, y) {
+      this.lw = lw;
+      this.stroke = stroke;
+      this.fill = fill;
+      this.w = w;
+      this.h = h;
+      this.x = x;
+      this.y = y;
+    }
   }
-
+  /************** CREATING ENEMY: **************/
+  /* instantiating enemies could be its own function.
+   * @params for constructor could be randomised.
+   */ 
+  function createEnemy() {
+    let enemy = []; 
+    for (let i=0; i<5; i++) 
+      enemy[i] = new Enemy(2, 'black', 'red', 15, 50, Math.floor(Math.random() * (800 - 100)) + 100, -50);
+    return enemy;
+  }
+  let enemies = createEnemy();
+  console.log(enemies);
+  
   // draws object onto canvas
   function drawItem(obj) {
     ctx.strokeStyle = obj.stroke;
@@ -45,17 +59,25 @@
   window.requestAnimationFrame(gameLoop);
   
   function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);   
-    car.y+=1.0;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    for (let i=0; i<5; i++) {
+      enemies[i].y+=1.0;
+      drawItem(enemies[i]);
+    }
+    
+    if (player.y == cHeight || player.y == 0 || player.x == cWidth || player.x == 0) {
+      console.log("hello world.");
+    }
 
     drawItem(player);
-    drawItem(car);
     movePlayer();
 
     window.requestAnimationFrame(gameLoop);
   }
+
   
-  /* keyboard inputs: */
+  /************** PLAYER MOVEMENT/KEYBOARD INPUTS: **************/
   // bool values to trigger direction
   let up    = false;
   let down  = false;
