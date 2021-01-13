@@ -37,8 +37,8 @@
    */ 
   function createEnemy() {
     let enemy = []; 
-    for (let i=0; i<5; i++) 
-      enemy[i] = new Enemy(2, 'black', 'red', 15, 50, Math.floor(Math.random() * (800 - 100)) + 100, -50);
+    for (let i=0; i<7; i++) 
+      enemy[i] = new Enemy(2, 'black', 'red', 15, 50, Math.floor(Math.random()*(800 - 100))+100, -50);
     return enemy;
   }
   let enemies = createEnemy();
@@ -63,7 +63,7 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // draw all enemy objects then move them
-    for (let i=0; i<5; i++) {
+    for (let i=0; i<7; i++) {
       drawItem(enemies[i]);
       enemies[i].y+=1.0;    // currently only moves in 1 directions
     }
