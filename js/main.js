@@ -76,7 +76,6 @@
     window.requestAnimationFrame(gameLoop);
   }
 
-  
   /************** PLAYER MOVEMENT/KEYBOARD INPUTS: **************/
   // bool values to trigger direction
   let up    = false;
