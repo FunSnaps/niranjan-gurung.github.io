@@ -31,18 +31,32 @@
       this.y = y;
     }
   }
-  /************** CREATING ENEMY: **************/
-  /* instantiating enemies could be its own function.
-   * @params for constructor could be randomised.
-   */ 
+
+  //random x and y coord generator
+  function xCoord(){  
+    var min = Math.ceil(100);
+    var max = Math.floor(cWidth - 100);
+
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+  function yCoord(){
+    var min = Math.ceil(-200);
+    var max = Math.floor(1000);
+
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  //creating enemy arrays
   function createEnemy() {
     let enemy = []; 
-    for (let i=0; i<7; i++) 
-      enemy[i] = new Enemy(2, 'black', 'red', 15, 50, Math.floor(Math.random()*(800 - 100))+100, -50);
+    for (let i=0; i<=15; i++) 
+      enemy[i] = new Enemy(2, 'black', 'red', 15, 50, xCoord(), yCoord());
     return enemy;
   }
+
   let enemies = createEnemy();
-  console.log(enemies);
+  let enemies2 = createEnemy();
+  console.log(enemies, enemies2);
   
   // draws object onto canvas
   function drawItem(obj) {
@@ -63,15 +77,20 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // draw all enemy objects then move them
-    for (let i=0; i<7; i++) {
+    for (let i=0; i<=15; i++) {
       drawItem(enemies[i]);
-      enemies[i].y+=1.0;    // currently only moves in 1 directions
+      enemies[i].y+=1.5;
     }
     
+    for (let y=0; y<=15; y++) {
+      drawItem(enemies2[y]);
+      enemies2[y].y-=1.5;
+    }
+
     if (player.y == cHeight || player.y == 0 || player.x == cWidth || player.x == 0) {
       console.log("hello world.");
     }
-    checkCollision();
+
     drawItem(player);
     movePlayer();
 
@@ -95,7 +114,7 @@
     if (left) 
       player.x-=player.speed;
   }
-
+  
   // key press
   document.addEventListener('keydown', function (ev) {
     if (ev.key === "ArrowUp") 
@@ -119,43 +138,5 @@
     if (ev.key === "ArrowLeft") 
       left = false;
   });
-
-  function checkCollision(){
-   
-    var gameOver = false;
- 
-    if(player.y == cHeight || player.y==0 || player.x == cWidth || player.x ==0){
-     gameOver = true;
-    
-     player.x = 0;
-     player.y = 0;
-     Enemy.x = 0;
-     Enemy.y = 0;
-     GameOver();
- 
-    }else if(player.x==Enemy.x || player.y == Enemy.y){
-      
-      player.x = 0;
-      player.y = 0;
-      Enemy.x = 0;
-      Enemy.y = 0;
-      GameOver();
-    }
-    {
-      return gameOver;
-    }
- 
-    function GameOver() {
-     
-     const canvas = document.getElementById('myCanvas');
-     const ctx    = canvas.getContext('2d');
- 
-     ctx.fillStyle = 'red';
-     ctx.font = '50px serif';
-     ctx.fillText('Game Over!', 50, 90);
-    }
- 
-   }
-
 
 })();
