@@ -87,9 +87,7 @@
       enemies2[y].y-=1.5;
     }
 
-    if (player.y == cHeight || player.y == 0 || player.x == cWidth || player.x == 0) {
-      console.log("hello world.");
-    }
+    checkCollision();
 
     drawItem(player);
     movePlayer();
@@ -139,4 +137,32 @@
       left = false;
   });
 
+  function checkCollision() {
+    let gameOver = false;
+ 
+    if (player.y == cHeight || player.y==0 || player.x == cWidth || player.x ==0) {
+      gameOver = true;
+    
+      player.x = 0;
+      player.y = 0;
+      Enemy.x = 0;
+      Enemy.y = 0;
+      GameOver();
+    } 
+    else if (player.x==Enemy.x || player.y == Enemy.y) {  
+      player.x = 0;
+      player.y = 0;
+      Enemy.x = 0;
+      Enemy.y = 0;
+      GameOver();
+    }
+    return gameOver;  
+  }
+
+  function GameOver() {
+   ctx.fillStyle = 'red';
+   ctx.font = '50px serif';
+   ctx.fillText('Game Over!', 50, 90);
+  }
+  
 })();
