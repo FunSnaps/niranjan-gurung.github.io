@@ -58,12 +58,14 @@
 
   window.requestAnimationFrame(gameLoop);
   
+  /************** MAIN GAME LOOP: **************/
   function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // draw all enemy objects then move them
     for (let i=0; i<5; i++) {
-      enemies[i].y+=1.0;
       drawItem(enemies[i]);
+      enemies[i].y+=1.0;    // currently only moves in 1 directions
     }
     
     if (player.y == cHeight || player.y == 0 || player.x == cWidth || player.x == 0) {
