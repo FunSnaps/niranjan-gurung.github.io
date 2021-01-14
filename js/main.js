@@ -133,14 +133,22 @@
 
     // key press
     document.addEventListener('keydown', function (ev) {
-      if (ev.key === "ArrowUp") 
+      if (ev.key === "ArrowUp") {
         up = true;
-      if (ev.key === "ArrowDown") 
+        playSound2();
+      }
+      if (ev.key === "ArrowDown") {
         down = true;
-      if (ev.key === "ArrowRight") 
+        playSound2();
+      }
+      if (ev.key === "ArrowRight") {
         right = true;
-      if (ev.key === "ArrowLeft")
+        playSound2();
+      }
+      if (ev.key === "ArrowLeft") {
         left = true;
+        playSound2();
+      }
     });
     
     // key release
@@ -174,6 +182,8 @@
     ctx.fillStyle = 'red';
     ctx.font = '30px serif';
     ctx.fillText('Game Over! Press any key to play again!', 30, 50);
+
+    playSound();
   }
 
   function drawScore() {
@@ -182,8 +192,18 @@
     ctx.fillText('Score : ' + score, 600,90);
   }
 
-  function clearScore(){
+  function clearScore() {
     score = "";
+  }
+  
+  function playSound() {
+    var sound = document.getElementById('sound');
+    sound.play();
+  }
+  
+  function playSound2() {
+    var sound = document.getElementById('sound2');
+    sound.play();
   }
 
   /************** MAIN GAME LOOP: **************/
@@ -193,7 +213,7 @@
     if (running) {
       draw();         // draw player + enemies
       movePlayer();
-  
+      
       if (checkCollision()) {
         gameOver();
         clearScore();
@@ -203,4 +223,5 @@
       window.requestAnimationFrame(gameLoop);
     }
   }
+
 })();
