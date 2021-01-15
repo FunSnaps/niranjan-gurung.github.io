@@ -15,6 +15,7 @@
   let down  = false;
   let left  = false;
   let right = false;
+  let enter = false;
   let score = 0;
 
   /************** Objects Declaration: **************/
@@ -135,19 +136,22 @@
     document.addEventListener('keydown', function (ev) {
       if (ev.key === "ArrowUp") {
         up = true;
-        playSound2();
+        //playSound2();
       }
       if (ev.key === "ArrowDown") {
         down = true;
-        playSound2();
+        //playSound2();
       }
       if (ev.key === "ArrowRight") {
         right = true;
-        playSound2();
+        //playSound2();
       }
       if (ev.key === "ArrowLeft") {
         left = true;
-        playSound2();
+        //playSound2();
+      }
+      if (ev.key === "Enter") {
+        enter = true;
       }
     });
     
@@ -161,6 +165,8 @@
         right = false;
       if (ev.key === "ArrowLeft") 
         left = false;
+      if (ev.key === "Enter") 
+        enter = false;
     });
   }
 
@@ -168,12 +174,16 @@
     let finished = false;
     
     // collision for walls
-    if (player.y+player.h===cHeight || player.y===0 || player.x+player.w===cWidth || player.x===0) {
+    if (player.y+player.h==cHeight || player.y==0 || player.x+player.w==cWidth || player.x==0) {
       finished=true;
       
       player.x = 50;
       player.y = cHeight/2;
       return finished;
+    }
+    // collision for enemies
+    if (player.x+player.w>=(enemies1[0].x+enemies1[0].h)/2) {
+      console.log('enemy hit');
     }
   }
 
@@ -181,15 +191,15 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'red';
     ctx.font = '30px serif';
-    ctx.fillText('Game Over! Press any key to play again!', 30, 50);
-
+    ctx.fillText('Game Over! Press enter to play again!', 30, 50);
+    score+=10;
     playSound();
   }
 
   function drawScore() {
     ctx.fillStyle = 'white';
-    ctx.font = '50px Verdana';
-    ctx.fillText('Score : ' + score, 600,90);
+    ctx.font = '20px Verdana';
+    ctx.fillText('Score : ' + score, 780,30);
   }
 
   function clearScore() {
@@ -216,12 +226,14 @@
       
       if (checkCollision()) {
         gameOver();
-        clearScore();
         running=false;
       }
       drawScore();
-      window.requestAnimationFrame(gameLoop);
+    } else if (enter) {
+      clearScore();
+      running=true;
     }
+    window.requestAnimationFrame(gameLoop);
   }
 
 })();
