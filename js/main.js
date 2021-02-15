@@ -1,5 +1,7 @@
 (function() {
+  /*****************************************************/
   /************** setup 2d canvas context **************/
+  /*****************************************************/
   const canvas = document.getElementById('myCanvas');
   const ctx    = canvas.getContext('2d');
 
@@ -7,7 +9,7 @@
   const cWidth  = canvas.width;
   const cHeight = canvas.height;
 
-  const numOfEnemies = 10;
+  const numOfEnemies = 5;
   let running = true;       // game loop state
 
   // bools used for player movement
@@ -15,165 +17,168 @@
   let down  = false;
   let left  = false;
   let right = false;
+  let enter = false;
   let score = 0;
 
-  /************** Objects Declaration: **************/
-  // player object
-  const player = {
-    lw: 2,                  // line weight
-    stroke: 'black',        // line colour
-    fill: 'blue',           // colour of fill style/fill
-    w: 20,                  // width dimensions
-    h: 20,                  // height dimensions
-    x: 50,                  // x coords
-    y: cHeight/2,           // y coords
-    speed: 1.0              // player speed
-  };
-  
-  // enemy entity
-  class Enemy {
-    constructor(lw, stroke, fill, w, h, x, y, y2) {
+  /**********************************************************/
+  /************** Class Structure of Entities: **************/
+  /**********************************************************/
+  // base class
+  class Entity {
+    constructor(lw, stroke, fill, w, h, x, y) {
       this.lw = lw;
       this.stroke = stroke;
-      this.fill = fill;
+      this.fill = fill;    
       this.w = w;
       this.h = h;
       this.x = x;
       this.y = y;
+    }
+
+    draw() {
+      ctx.strokeStyle = this.stroke;
+      ctx.fillStyle = this.fill;
+      ctx.lineWidth = this.lw;
+
+      // creates rectangle with current fill style/colour.
+      ctx.fillRect(this.x, this.y, this.w, this.h);
+      // adds stroke to rectangle with current stroke
+      ctx.strokeRect(this.x, this.y, this.w, this.h);
+    }
+  };
+
+  // player object:
+  class Player extends Entity {
+    constructor(lw, stroke, fill, w, h, x, y, speed) {
+      super(lw, stroke, fill, w, h, x, y);
+      this.speed = speed;
+    }
+
+    /************** PLAYER MOVEMENT/KEYBOARD INPUTS: **************/
+    movePlayer() {
+      if (up)    player.y -= player.speed;
+      if (down)  player.y += player.speed;
+      if (right) player.x += player.speed;
+      if (left)  player.x -= player.speed;
+  
+      // key press
+      document.addEventListener('keydown', function (ev) {
+        if (ev.key === "ArrowUp")    up    = true;        
+        if (ev.key === "ArrowDown")  down  = true;
+        if (ev.key === "ArrowRight") right = true;
+        if (ev.key === "ArrowLeft")  left  = true;
+        if (ev.key === "Enter")      enter = true;
+      });
+      
+      // key release
+      document.addEventListener('keyup', function (ev) {
+        if (ev.key === "ArrowUp")    up    = false;
+        if (ev.key === "ArrowDown")  down  = false;
+        if (ev.key === "ArrowRight") right = false;
+        if (ev.key === "ArrowLeft")  left  = false;
+        if (ev.key === "Enter")      enter = false;
+      });
+    }
+  };
+  
+  // enemy objects:
+  class Enemy extends Entity {
+    constructor(lw, stroke, fill, w, h, x, y, y2) {
+      super(lw, stroke, fill, w, h, x, y)
       this.y2 = y2;
+    }
+    
+    static createEnemy() {
+      let enemy = []; 
+      for (let i = 0; i < numOfEnemies; i++) 
+        enemy[i] = new Enemy(2, 'black', 'red', 15, 50, xCoord(), downwards(), upwards());
+      return enemy;
     }
   }
 
-  // /************** FUNCTIONS DECLARATIONS: **************/
-  //random x and y coord generator
+  /******************************************************/
+  /************** CREATE PLAYER + ENEMIES: **************/
+  /******************************************************/
+  const player    = new Player(2, 'black', 'blue', 20, 20, 50, cHeight/2, 1.0);
+  let topEnemy    = Enemy.createEnemy();
+  let bottomEnemy = Enemy.createEnemy();
+
+  /*****************************************************/
+  /************** FUNCTIONS DECLARATIONS: **************/
+  /*****************************************************/
+  function loopEnemies() {
+    for (let i = 0; i < numOfEnemies; i++) {
+      topEnemy[i].draw();
+      bottomEnemy[i].draw();
+
+      if (topEnemy[i].y < cHeight) 
+        topEnemy[i].y += 2;
+      else {
+        /* reset top enemies when they reach the bottom.
+        * smoothly transitions to re-enter from top of screen */
+       topEnemy[i].y = -topEnemy[i].h;
+       topEnemy[i].x = xCoord(); // calculate new x coordinate when it reaches end of screen.
+      }
+      if ((bottomEnemy[i].y + bottomEnemy[i].h) > 0) 
+        bottomEnemy[i].y -= 2;
+      else {
+        /* reset bottom enemies when they reach the top.
+        * smoothly transitions to re-enter from bottom of screen */
+       bottomEnemy[i].y = (bottomEnemy[i].y + bottomEnemy[i].h) + cHeight;
+       bottomEnemy[i].x = xCoord(); // calculate new x coordinate when it reaches end of screen.
+      }
+    }
+  }
+  // draw everything onto canvas for gameloop
+  function drawEntities() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    player.draw();  // draw player
+    loopEnemies();  // all enemies are drawn, positioned and smoothly looped when they reach the end of the screen.
+  }
+
+  /* Helper Functions:
+   * random x coord generator */
   function xCoord() {
     var min = Math.ceil(100);
     var max = Math.floor(cWidth - 100);
-
     return Math.floor(Math.random() * (max - min) + min);
   }
 
   function downwards() {
     var min = Math.ceil(-600);
     var max = Math.floor(0);
-
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   function upwards() {
     var min = Math.ceil(500);
     var max = Math.floor(600);
-
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  //creating enemy arrays
-  function createEnemy() {
-    let enemy = []; 
-    for (let i=0; i<=numOfEnemies; i++) 
-      enemy[i] = new Enemy(2, 'black', 'red', 15, 50, xCoord(), downwards(), upwards());
-    return enemy;
-  }
-
-  // creates 2 seperate instances of enemy arrays  
-  let enemies1 = createEnemy();
-  let enemies2 = createEnemy();
-  
-  // draws object onto canvas
-  function drawItem(obj) {
-    ctx.strokeStyle = obj.stroke;
-    ctx.fillStyle = obj.fill;
-    ctx.lineWidth = obj.lw;
-
-    // creates rectangle with current fill style/colour.
-    ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
-    // adds stroke to rectangle with current stroke
-    ctx.strokeRect(obj.x, obj.y, obj.w, obj.h);
-  }
-
-  function loopEnemies() {
-    for (let i = 0; i <= 4; i++) {
-      drawItem(enemies1[i]);
-      drawItem(enemies2[i]);
-
-      if (enemies1[i].y < 600) {
-        enemies1[i].y += 2;
-      }
-      else {
-        enemies1[i].x = xCoord();
-        enemies1[i].y = downwards();
-      }
-      if (enemies2[i].y > 0) {
-        enemies2[i].y -= 2;
-      }
-      else {
-        enemies2[i].x = xCoord();
-        enemies2[i].y = upwards();
-      }
-    }
-  }
-
-  // draw everything onto canvas for gameloop
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawItem(player);
-    loopEnemies();
-  }
-
-  /************** PLAYER MOVEMENT/KEYBOARD INPUTS: **************/
-  function movePlayer() {
-    if (up) 
-      player.y-=player.speed;
-    if (down) 
-      player.y+=player.speed;
-    if (right) 
-      player.x+=player.speed;
-    if (left) 
-      player.x-=player.speed;
-
-    // key press
-    document.addEventListener('keydown', function (ev) {
-      if (ev.key === "ArrowUp") {
-        up = true;
-        playSound2();
-      }
-      if (ev.key === "ArrowDown") {
-        down = true;
-        playSound2();
-      }
-      if (ev.key === "ArrowRight") {
-        right = true;
-        playSound2();
-      }
-      if (ev.key === "ArrowLeft") {
-        left = true;
-        playSound2();
-      }
-    });
-    
-    // key release
-    document.addEventListener('keyup', function (ev) {
-      if (ev.key === "ArrowUp") 
-        up = false;
-      if (ev.key === "ArrowDown") 
-        down = false;
-      if (ev.key === "ArrowRight") 
-        right = false;
-      if (ev.key === "ArrowLeft") 
-        left = false;
-    });
-  }
-
+  /************** COLLISIONS: **************/
   function checkCollision() {
     let finished = false;
     
     // collision for walls
-    if (player.y+player.h===cHeight || player.y===0 || player.x+player.w===cWidth || player.x===0) {
-      finished=true;
-      
+    if (player.y + player.h == cHeight || player.y == 0 || player.x + player.w == cWidth || player.x == 0) {
+      finished = true;
       player.x = 50;
       player.y = cHeight/2;
       return finished;
+    }
+
+    // collision for enemies
+    for (let i = 0; i < numOfEnemies; i++) {
+      if ((player.y < (topEnemy[i].y + topEnemy[i].h) && (player.y + player.h) > topEnemy[i].y) &&
+          (player.x < (topEnemy[i].x + topEnemy[i].w) && (player.x + player.w) > topEnemy[i].x) || 
+          (player.y < (bottomEnemy[i].y + bottomEnemy[i].h) && (player.y + player.h) > bottomEnemy[i].y) &&
+          (player.x < (bottomEnemy[i].x + bottomEnemy[i].w) && (player.x + player.w) > bottomEnemy[i].x)) {
+        finished = true;
+        player.x = 50;
+        player.y = cHeight/2;
+        return finished;
+      }
     }
   }
 
@@ -181,15 +186,15 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'red';
     ctx.font = '30px serif';
-    ctx.fillText('Game Over! Press any key to play again!', 30, 50);
-
+    ctx.fillText('Game Over! Press enter to play again!', 30, 50);
+    score+=10;
     playSound();
   }
 
   function drawScore() {
     ctx.fillStyle = 'white';
-    ctx.font = '50px Verdana';
-    ctx.fillText('Score : ' + score, 600,90);
+    ctx.font = '20px Verdana';
+    ctx.fillText('Score : ' + score, 780,30);
   }
 
   function clearScore() {
@@ -211,17 +216,19 @@
   
   function gameLoop() {
     if (running) {
-      draw();         // draw player + enemies
-      movePlayer();
+      drawEntities();         // draw player + enemies
+      player.movePlayer();
       
       if (checkCollision()) {
         gameOver();
-        clearScore();
         running=false;
       }
       drawScore();
-      window.requestAnimationFrame(gameLoop);
+    } 
+    else if (enter) {
+      clearScore();
+      running=true;
     }
+    window.requestAnimationFrame(gameLoop);
   }
-
 })();
