@@ -10,6 +10,7 @@
   const cHeight = canvas.height;
 
   const numOfEnemies = 5;
+  let running = true;       // game loop state
 
   // bools used for player movement
   let up    = false;
@@ -18,15 +19,17 @@
   let right = false;
   let enter = false;
   let score = 0;
-
-  // game state
-  let gameover = false;
-  let running  = true;       
+  let gameFrame = 0; ///////////////////////////////////////////////////////////
 
   /**********************************************************/
   /************** Class Structure of Entities: **************/
   /**********************************************************/
   // base class
+  const playerLeft = new Image();
+  playerLeft.src = 'images/fish_Left1.ping';
+  const playerRight = new Image();
+  playerRight.src = 'images/fish1_Right.png';
+
   class Entity {
     constructor(lw, stroke, fill, w, h, x, y) {
       this.lw = lw;
@@ -37,14 +40,16 @@
       this.x = x;
       this.y = y;
     }
-
+    
     draw() {
+      
       ctx.strokeStyle = this.stroke;
       ctx.fillStyle = this.fill;
       ctx.lineWidth = this.lw;
-
+      
       // creates rectangle with current fill style/colour.
       ctx.fillRect(this.x, this.y, this.w, this.h);
+      
       // adds stroke to rectangle with current stroke
       ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
@@ -55,6 +60,7 @@
     constructor(lw, stroke, fill, w, h, x, y, speed) {
       super(lw, stroke, fill, w, h, x, y);
       this.speed = speed;
+
     }
 
     /************** PLAYER MOVEMENT/KEYBOARD INPUTS: **************/
@@ -94,7 +100,7 @@
     static createEnemy() {
       let enemy = []; 
       for (let i = 0; i < numOfEnemies; i++) 
-        enemy.push(new Enemy(2, 'black', 'red', 15, 50, xCoord(), downwards(), upwards()));
+        enemy[i] = new Enemy(2, 'black', 'red', 15, 50, xCoord(), downwards(), upwards());
       return enemy;
     }
   }
@@ -102,9 +108,10 @@
   /******************************************************/
   /************** CREATE PLAYER + ENEMIES: **************/
   /******************************************************/
-  const player    = new Player(2, 'black', 'blue', 20, 20, 50, cHeight/2, 1.0);
+  const player    = new Player(2, 'black', 'blue', 30, 30, 50, cHeight/2, 1.0);
   let topEnemy    = Enemy.createEnemy();
   let bottomEnemy = Enemy.createEnemy();
+   
 
   /*****************************************************/
   /************** FUNCTIONS DECLARATIONS: **************/
@@ -117,66 +124,60 @@
       if (topEnemy[i].y < cHeight) 
         topEnemy[i].y += 2;
       else {
-       // calculate new x and y coordinates when it reaches bottom of screen.
-       topEnemy[i].y = downwards();   
-       topEnemy[i].x = xCoord();    
+        /* reset top enemies when they reach the bottom.
+        * smoothly transitions to re-enter from top of screen */
+       topEnemy[i].y = -topEnemy[i].h;
+       topEnemy[i].x = xCoord(); // calculate new x coordinate when it reaches end of screen.
       }
       if ((bottomEnemy[i].y + bottomEnemy[i].h) > 0) 
         bottomEnemy[i].y -= 2;
       else {
-       // calculate new x and y coordinates when it reaches top of screen.
-       bottomEnemy[i].y = upwards();
-       bottomEnemy[i].x = xCoord(); 
+        /* reset bottom enemies when they reach the top.
+        * smoothly transitions to re-enter from bottom of screen */
+       bottomEnemy[i].y = (bottomEnemy[i].y + bottomEnemy[i].h) + cHeight;
+       bottomEnemy[i].x = xCoord(); // calculate new x coordinate when it reaches end of screen.
       }
     }
   }
   // draw everything onto canvas for gameloop
   function drawEntities() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // draw end of level area
-    ctx.fillStyle = 'green';
-    ctx.fillRect(cWidth-100, 0, cWidth-100, cHeight);
-
+    //bg.draw();
     player.draw();  // draw player
+    //drawImage();
     loopEnemies();  // all enemies are drawn, positioned and smoothly looped when they reach the end of the screen.
   }
 
   /* Helper Functions:
    * random x coord generator */
   function xCoord() {
-    var min = Math.ceil(120);
-    var max = Math.floor(cWidth - 120);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    var min = Math.ceil(100);
+    var max = Math.floor(cWidth - 100);
+    return Math.floor(Math.random() * (max - min) + min);
   }
 
   function downwards() {
-    var min = Math.ceil(-400);
+    var min = Math.ceil(-600);
     var max = Math.floor(0);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   function upwards() {
-    var min = Math.ceil(600);
-    var max = Math.floor(1000);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    var min = Math.ceil(500);
+    var max = Math.floor(600);
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   /************** COLLISIONS: **************/
   function checkCollision() {
-    // if you complete the level:
-    if (player.x + player.w == (cWidth-100)) {
-      score += 10;
-      player.x = 50;
-      player.y = cHeight/2;
-    }
-
+    let finished = false;
+    
     // collision for walls
-    if (player.y + player.h == cHeight || player.y == 0 || player.x == 0) {
-      gameover = true;
+    if (player.y + player.h == cHeight || player.y == 0 || player.x + player.w == cWidth || player.x == 0) {
+      finished = true;
       player.x = 50;
       player.y = cHeight/2;
-      return gameover;
+      return finished;
     }
 
     // collision for enemies
@@ -185,10 +186,10 @@
           (player.x < (topEnemy[i].x + topEnemy[i].w) && (player.x + player.w) > topEnemy[i].x) || 
           (player.y < (bottomEnemy[i].y + bottomEnemy[i].h) && (player.y + player.h) > bottomEnemy[i].y) &&
           (player.x < (bottomEnemy[i].x + bottomEnemy[i].w) && (player.x + player.w) > bottomEnemy[i].x)) {
-            gameover = true;
+        finished = true;
         player.x = 50;
         player.y = cHeight/2;
-        return gameover;
+        return finished;
       }
     }
   }
@@ -196,21 +197,20 @@
   function gameOver() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'red';
-    ctx.font = '40px serif';
-    
-    ctx.fillText(`GAME OVER. You scored ${score}`, 30, 50);
-    ctx.fillText('Press Enter to Play Again', 30, 100);
+    ctx.font = '30px serif';
+    ctx.fillText('Game Over! Press enter to play again!', 30, 50);
+    score+=10;
     playSound();
   }
 
   function drawScore() {
     ctx.fillStyle = 'white';
     ctx.font = '20px Verdana';
-    ctx.fillText('Score : ' + score, 780, 30);
+    ctx.fillText('Score : ' + score, 780,30);
   }
 
   function clearScore() {
-    score = 0;
+    score = "";
   }
   
   function playSound() {
@@ -230,6 +230,8 @@
     if (running) {
       drawEntities();         // draw player + enemies
       player.movePlayer();
+      handelBaubbles();
+      gameFrame++; 
       
       if (checkCollision()) {
         gameOver();
@@ -243,4 +245,61 @@
     }
     window.requestAnimationFrame(gameLoop);
   }
+  
+  //Bubbles class
+  const bubblesArray = [];
+  class Bubble {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.radius = 25;
+      this.speed = Math.random() * 5 + 1;
+      this.destance;
+    }
+    update1() {
+      this.y -= this.speed;
+    }
+
+    draw1(){
+      ctx.fillStyle = 'blue';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI *4);
+      ctx.fill();
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+
+  // Handel bubbles function  
+  function  handelBaubbles() {
+    if(gameFrame % 50 == 0){
+      bubblesArray.push(new Bubble());
+    }
+    for (let i = 0; i < bubblesArray.length; i++) {
+      bubblesArray[i].update1();
+      bubblesArray[i].draw1();
+    }
+  }
+
+// Load sprite
+ const sprite = new Image();
+ sprite.src = "images/sprite4.jfif";
+//background
+   const bg = {
+     sX : 0,
+     sY : 0,
+     w : 420,
+     h :226,
+     x : 0,
+     y : canvas.height - 226,
+     draw : function() {
+       ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y,
+       this.w, this.h);
+ 
+       ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x + this.w, this.y,
+         this.w, this.h);
+         
+     }
+   }
+
 })();
