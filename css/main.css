@@ -1,13 +1,12 @@
 canvas {
-  background-color: #5F9EA0;
-  border: 3px solid black;
+  background-color: black;
+  border: 3px solid #5F9EA0;
 
   padding-left: 0;
   padding-right: 0;
   margin-left: auto;
   margin-right: auto;
   display: block;
-  
 }
 
 body { 

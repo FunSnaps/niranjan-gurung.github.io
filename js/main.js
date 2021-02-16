@@ -30,11 +30,17 @@
   let right = false;
   let enter = false;
   let score = 0;
+  let gameFrame = 0; ///////////////////////////////////////////////////////////
 
   /**********************************************************/
   /************** Class Structure of Entities: **************/
   /**********************************************************/
   // base class
+  const playerLeft = new Image();
+  playerLeft.src = 'images/fish_Left1.ping';
+  const playerRight = new Image();
+  playerRight.src = 'images/fish1_Right.png';
+
   class Entity {
     constructor(lw, stroke, fill, w, h, x, y) {
       this.lw = lw;
@@ -45,14 +51,16 @@
       this.x = x;
       this.y = y;
     }
-
+    
     draw() {
+      
       ctx.strokeStyle = this.stroke;
       ctx.fillStyle = this.fill;
       ctx.lineWidth = this.lw;
-
+      
       // creates rectangle with current fill style/colour.
       ctx.fillRect(this.x, this.y, this.w, this.h);
+      
       // adds stroke to rectangle with current stroke
       ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
@@ -63,6 +71,7 @@
     constructor(lw, stroke, fill, w, h, x, y, speed) {
       super(lw, stroke, fill, w, h, x, y);
       this.speed = speed;
+
     }
 
     /************** PLAYER MOVEMENT/KEYBOARD INPUTS: **************/
@@ -110,9 +119,10 @@
   /******************************************************/
   /************** CREATE PLAYER + ENEMIES: **************/
   /******************************************************/
-  const player = new Player(2, 'black', 'blue', 20, 20, 50, cHeight / 2, 1.0);
-  let topEnemy = Enemy.createEnemy();
+  const player    = new Player(2, 'black', 'blue', 30, 30, 50, cHeight/2, 1.0);
+  let topEnemy    = Enemy.createEnemy();
   let bottomEnemy = Enemy.createEnemy();
+   
 
   /*****************************************************/
   /************** FUNCTIONS DECLARATIONS: **************/
@@ -143,7 +153,9 @@
   // draw everything onto canvas for gameloop
   function drawEntities() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //bg.draw();
     player.draw();  // draw player
+    //drawImage();
     loopEnemies();  // all enemies are drawn, positioned and smoothly looped when they reach the end of the screen.
   }
 
@@ -229,7 +241,9 @@
     if (running) {
       drawEntities();         // draw player + enemies
       player.movePlayer();
-
+      handelBaubbles();
+      gameFrame++; 
+      
       if (checkCollision()) {
         gameOver();
         running = false;
@@ -242,4 +256,61 @@
     }
     window.requestAnimationFrame(gameLoop);
   }
+  
+  //Bubbles class
+  const bubblesArray = [];
+  class Bubble {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.radius = 25;
+      this.speed = Math.random() * 5 + 1;
+      this.destance;
+    }
+    update1() {
+      this.y -= this.speed;
+    }
+
+    draw1(){
+      ctx.fillStyle = 'blue';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI *4);
+      ctx.fill();
+      ctx.closePath();
+      ctx.stroke();
+    }
+  }
+
+  // Handel bubbles function  
+  function  handelBaubbles() {
+    if(gameFrame % 50 == 0){
+      bubblesArray.push(new Bubble());
+    }
+    for (let i = 0; i < bubblesArray.length; i++) {
+      bubblesArray[i].update1();
+      bubblesArray[i].draw1();
+    }
+  }
+
+// Load sprite
+ const sprite = new Image();
+ sprite.src = "images/sprite4.jfif";
+//background
+   const bg = {
+     sX : 0,
+     sY : 0,
+     w : 420,
+     h :226,
+     x : 0,
+     y : canvas.height - 226,
+     draw : function() {
+       ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y,
+       this.w, this.h);
+ 
+       ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x + this.w, this.y,
+         this.w, this.h);
+         
+     }
+   }
+
 })();
