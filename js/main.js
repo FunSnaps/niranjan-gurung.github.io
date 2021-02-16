@@ -51,16 +51,16 @@
       this.x = x;
       this.y = y;
     }
-    
+
     draw() {
-      
+
       ctx.strokeStyle = this.stroke;
       ctx.fillStyle = this.fill;
       ctx.lineWidth = this.lw;
-      
+
       // creates rectangle with current fill style/colour.
       ctx.fillRect(this.x, this.y, this.w, this.h);
-      
+
       // adds stroke to rectangle with current stroke
       ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
@@ -119,10 +119,10 @@
   /******************************************************/
   /************** CREATE PLAYER + ENEMIES: **************/
   /******************************************************/
-  const player    = new Player(2, 'black', 'blue', 30, 30, 50, cHeight/2, 1.0);
-  let topEnemy    = Enemy.createEnemy();
+  const player = new Player(2, 'black', 'blue', 30, 30, 50, cHeight / 2, 1.0);
+  let topEnemy = Enemy.createEnemy();
   let bottomEnemy = Enemy.createEnemy();
-   
+
 
   /*****************************************************/
   /************** FUNCTIONS DECLARATIONS: **************/
@@ -242,8 +242,8 @@
       drawEntities();         // draw player + enemies
       player.movePlayer();
       handelBaubbles();
-      gameFrame++; 
-      
+      gameFrame++;
+
       if (checkCollision()) {
         gameOver();
         running = false;
@@ -256,7 +256,7 @@
     }
     window.requestAnimationFrame(gameLoop);
   }
-  
+
   //Bubbles class
   const bubblesArray = [];
   class Bubble {
@@ -271,10 +271,10 @@
       this.y -= this.speed;
     }
 
-    draw1(){
+    draw1() {
       ctx.fillStyle = 'blue';
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI *4);
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 4);
       ctx.fill();
       ctx.closePath();
       ctx.stroke();
@@ -282,8 +282,8 @@
   }
 
   // Handel bubbles function  
-  function  handelBaubbles() {
-    if(gameFrame % 50 == 0){
+  function handelBaubbles() {
+    if (gameFrame % 50 == 0) {
       bubblesArray.push(new Bubble());
     }
     for (let i = 0; i < bubblesArray.length; i++) {
@@ -292,23 +292,23 @@
     }
   }
 
-// Load sprite
- const sprite = new Image();
- sprite.src = "images/sprite4.jfif";
-//background
-   const bg = {
-     sX : 0,
-     sY : 0,
-     w : 420,
-     h :226,
-     x : 0,
-     y : canvas.height - 226,
-     draw : function() {
-       ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y,
-       this.w, this.h);
- 
-       ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x + this.w, this.y,
-         this.w, this.h);
-     }
-   }
+  // Load sprite
+  const sprite = new Image();
+  sprite.src = "images/sprite4.jfif";
+  //background
+  const bg = {
+    sX: 0,
+    sY: 0,
+    w: 420,
+    h: 226,
+    x: 0,
+    y: canvas.height - 226,
+    draw: function () {
+      ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y,
+        this.w, this.h);
+
+      ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x + this.w, this.y,
+        this.w, this.h);
+    }
+  }
 })();
