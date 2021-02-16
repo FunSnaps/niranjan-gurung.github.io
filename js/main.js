@@ -1,21 +1,32 @@
-(function() {
+(function () {
   /*****************************************************/
   /************** setup 2d canvas context **************/
   /*****************************************************/
   const canvas = document.getElementById('myCanvas');
-  const ctx    = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d');
+
+  /******************** SW register ********************/
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('../sw_cached_pages.js')
+        .then(reg => console.log('Service Worker: Registered!'))
+        .catch(err => console.log(`Service Worker: Error: ${err}`))
+    })
+  }
 
   /************** GLOBAL VARIABLES: **************/
-  const cWidth  = canvas.width;
+  const cWidth = canvas.width;
   const cHeight = canvas.height;
 
   const numOfEnemies = 5;
   let running = true;       // game loop state
 
   // bools used for player movement
-  let up    = false;
-  let down  = false;
-  let left  = false;
+  let up = false;
+  let down = false;
+  let left = false;
   let right = false;
   let enter = false;
   let score = 0;
@@ -28,7 +39,7 @@
     constructor(lw, stroke, fill, w, h, x, y) {
       this.lw = lw;
       this.stroke = stroke;
-      this.fill = fill;    
+      this.fill = fill;
       this.w = w;
       this.h = h;
       this.x = x;
@@ -56,41 +67,41 @@
 
     /************** PLAYER MOVEMENT/KEYBOARD INPUTS: **************/
     movePlayer() {
-      if (up)    player.y -= player.speed;
-      if (down)  player.y += player.speed;
+      if (up) player.y -= player.speed;
+      if (down) player.y += player.speed;
       if (right) player.x += player.speed;
-      if (left)  player.x -= player.speed;
-  
+      if (left) player.x -= player.speed;
+
       // key press
       document.addEventListener('keydown', function (ev) {
-        if (ev.key === "ArrowUp")    up    = true;        
-        if (ev.key === "ArrowDown")  down  = true;
+        if (ev.key === "ArrowUp") up = true;
+        if (ev.key === "ArrowDown") down = true;
         if (ev.key === "ArrowRight") right = true;
-        if (ev.key === "ArrowLeft")  left  = true;
-        if (ev.key === "Enter")      enter = true;
+        if (ev.key === "ArrowLeft") left = true;
+        if (ev.key === "Enter") enter = true;
       });
-      
+
       // key release
       document.addEventListener('keyup', function (ev) {
-        if (ev.key === "ArrowUp")    up    = false;
-        if (ev.key === "ArrowDown")  down  = false;
+        if (ev.key === "ArrowUp") up = false;
+        if (ev.key === "ArrowDown") down = false;
         if (ev.key === "ArrowRight") right = false;
-        if (ev.key === "ArrowLeft")  left  = false;
-        if (ev.key === "Enter")      enter = false;
+        if (ev.key === "ArrowLeft") left = false;
+        if (ev.key === "Enter") enter = false;
       });
     }
   };
-  
+
   // enemy objects:
   class Enemy extends Entity {
     constructor(lw, stroke, fill, w, h, x, y, y2) {
       super(lw, stroke, fill, w, h, x, y)
       this.y2 = y2;
     }
-    
+
     static createEnemy() {
-      let enemy = []; 
-      for (let i = 0; i < numOfEnemies; i++) 
+      let enemy = [];
+      for (let i = 0; i < numOfEnemies; i++)
         enemy[i] = new Enemy(2, 'black', 'red', 15, 50, xCoord(), downwards(), upwards());
       return enemy;
     }
@@ -99,8 +110,8 @@
   /******************************************************/
   /************** CREATE PLAYER + ENEMIES: **************/
   /******************************************************/
-  const player    = new Player(2, 'black', 'blue', 20, 20, 50, cHeight/2, 1.0);
-  let topEnemy    = Enemy.createEnemy();
+  const player = new Player(2, 'black', 'blue', 20, 20, 50, cHeight / 2, 1.0);
+  let topEnemy = Enemy.createEnemy();
   let bottomEnemy = Enemy.createEnemy();
 
   /*****************************************************/
@@ -111,21 +122,21 @@
       topEnemy[i].draw();
       bottomEnemy[i].draw();
 
-      if (topEnemy[i].y < cHeight) 
+      if (topEnemy[i].y < cHeight)
         topEnemy[i].y += 2;
       else {
         /* reset top enemies when they reach the bottom.
         * smoothly transitions to re-enter from top of screen */
-       topEnemy[i].y = -topEnemy[i].h;
-       topEnemy[i].x = xCoord(); // calculate new x coordinate when it reaches end of screen.
+        topEnemy[i].y = -topEnemy[i].h;
+        topEnemy[i].x = xCoord(); // calculate new x coordinate when it reaches end of screen.
       }
-      if ((bottomEnemy[i].y + bottomEnemy[i].h) > 0) 
+      if ((bottomEnemy[i].y + bottomEnemy[i].h) > 0)
         bottomEnemy[i].y -= 2;
       else {
         /* reset bottom enemies when they reach the top.
         * smoothly transitions to re-enter from bottom of screen */
-       bottomEnemy[i].y = (bottomEnemy[i].y + bottomEnemy[i].h) + cHeight;
-       bottomEnemy[i].x = xCoord(); // calculate new x coordinate when it reaches end of screen.
+        bottomEnemy[i].y = (bottomEnemy[i].y + bottomEnemy[i].h) + cHeight;
+        bottomEnemy[i].x = xCoord(); // calculate new x coordinate when it reaches end of screen.
       }
     }
   }
@@ -159,24 +170,24 @@
   /************** COLLISIONS: **************/
   function checkCollision() {
     let finished = false;
-    
+
     // collision for walls
     if (player.y + player.h == cHeight || player.y == 0 || player.x + player.w == cWidth || player.x == 0) {
       finished = true;
       player.x = 50;
-      player.y = cHeight/2;
+      player.y = cHeight / 2;
       return finished;
     }
 
     // collision for enemies
     for (let i = 0; i < numOfEnemies; i++) {
       if ((player.y < (topEnemy[i].y + topEnemy[i].h) && (player.y + player.h) > topEnemy[i].y) &&
-          (player.x < (topEnemy[i].x + topEnemy[i].w) && (player.x + player.w) > topEnemy[i].x) || 
-          (player.y < (bottomEnemy[i].y + bottomEnemy[i].h) && (player.y + player.h) > bottomEnemy[i].y) &&
-          (player.x < (bottomEnemy[i].x + bottomEnemy[i].w) && (player.x + player.w) > bottomEnemy[i].x)) {
+        (player.x < (topEnemy[i].x + topEnemy[i].w) && (player.x + player.w) > topEnemy[i].x) ||
+        (player.y < (bottomEnemy[i].y + bottomEnemy[i].h) && (player.y + player.h) > bottomEnemy[i].y) &&
+        (player.x < (bottomEnemy[i].x + bottomEnemy[i].w) && (player.x + player.w) > bottomEnemy[i].x)) {
         finished = true;
         player.x = 50;
-        player.y = cHeight/2;
+        player.y = cHeight / 2;
         return finished;
       }
     }
@@ -187,25 +198,25 @@
     ctx.fillStyle = 'red';
     ctx.font = '30px serif';
     ctx.fillText('Game Over! Press enter to play again!', 30, 50);
-    score+=10;
+    score += 10;
     playSound();
   }
 
   function drawScore() {
     ctx.fillStyle = 'white';
     ctx.font = '20px Verdana';
-    ctx.fillText('Score : ' + score, 780,30);
+    ctx.fillText('Score : ' + score, 780, 30);
   }
 
   function clearScore() {
     score = "";
   }
-  
+
   function playSound() {
     var sound = document.getElementById('sound');
     sound.play();
   }
-  
+
   function playSound2() {
     var sound = document.getElementById('sound2');
     sound.play();
@@ -213,21 +224,21 @@
 
   /************** MAIN GAME LOOP: **************/
   window.requestAnimationFrame(gameLoop);
-  
+
   function gameLoop() {
     if (running) {
       drawEntities();         // draw player + enemies
       player.movePlayer();
-      
+
       if (checkCollision()) {
         gameOver();
-        running=false;
+        running = false;
       }
       drawScore();
-    } 
+    }
     else if (enter) {
       clearScore();
-      running=true;
+      running = true;
     }
     window.requestAnimationFrame(gameLoop);
   }
