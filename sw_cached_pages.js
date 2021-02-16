@@ -7,6 +7,13 @@ const cacheAssets = [
     'index.html',
     '/css/main.css',
     '/js/main.js',
+    '/images/fish1_Left.png',
+    '/images/fish1_Right.png',
+    '/images/sprite1.jpg',
+    '/images/sprite.jfif',
+    '/images/sprite2.jfif',
+    '/images/sprite3.jfif',
+    '/images/sprite4.jfif',
     '/sound/moveSound.ogg',
     '/sound/wallSound.wav'
 ];
