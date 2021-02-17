@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <link rel="canonical" href="https://{niranjan-gurung}.github.io/{niranjan-gurung.github.io}/" />
   <title>Skybet</title>
 
   <style>
@@ -28,8 +28,17 @@
 
 <body>
   <h1>totally skybet</h1>
-
-  <script src="/{https://niranjan-gurung.github.io}/app.js"></script>
+  <script>
+    // register ServiceWorker, remember to use absolute path!
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/{niranjan-gurung.github.io}/sw_cached_pages.js', {scope: '/{niranjan-gurung.github.io}/'})
+          .then(reg => console.log('Service Worker: Registered!'))
+          .catch(err => console.log(`Service Worker: Error: ${err}`))
+      })
+    }
+  </script>
 </body>
 
 </html>
