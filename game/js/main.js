@@ -205,10 +205,16 @@
   }
 
   function gameOver() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'red';
-    ctx.font = '30px serif';
-    ctx.fillText('Game Over! Press enter to play again!', 30, 50);
+    ctx.fillStyle = "white";
+    ctx.font = "35px Verdana";
+    var gradient = ctx.createLinearGradient(0, 0, canvas.width,  0);
+    gradient.addColorStop("0", "magenta");
+    gradient.addColorStop("0.5", "blue");
+    gradient.addColorStop("1.0", "red");
+    //fill with gradient
+    ctx.fillStyle = gradient;
+    ctx.fillText('Game Over! Press enter to play again!', canvas.width / 6.5, canvas.height / 2);
+
     score += 10;
     playSound();
   }
