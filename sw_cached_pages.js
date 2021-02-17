@@ -4,7 +4,7 @@
 const cacheName = 'V1';
 //collection of assets to be cached
 const cacheAssets = [
-  'game/crossy-road.html',
+  'game/index.html',
   'game/css/main.css',
   'game/js/main.js',
   'game/images/fish1_Left.png',
