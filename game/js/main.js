@@ -152,7 +152,7 @@
   // draw everything onto canvas for gameloop
   function drawEntities() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //bg.draw();
+    bg.draw();
     player.draw();  // draw player
     //drawImage();
     loopEnemies();  // all enemies are drawn, positioned and smoothly looped when they reach the end of the screen.
@@ -293,7 +293,7 @@
 
   // Load sprite
   const sprite = new Image();
-  sprite.src = "images/sprite4.jfif";
+  sprite.src = "images/sprite4.jpg";
   //background
   const bg = {
     sX: 0,
