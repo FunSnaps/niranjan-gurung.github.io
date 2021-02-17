@@ -4,18 +4,18 @@
 const cacheName = 'V1';
 //collection of assets to be cached
 const cacheAssets = [
-  'crossy-road.html',
-  '/css/main.css',
-  '/js/main.js',
-  '/images/fish1_Left.png',
-  '/images/fish1_Right.png',
-  '/images/sprite1.jpg',
-  '/images/sprite.jfif',
-  '/images/sprite2.jfif',
-  '/images/sprite3.jfif',
-  '/images/sprite4.jfif',
-  '/sound/moveSound.ogg',
-  '/sound/wallSound.wav'
+  'game/crossy-road.html',
+  'game/css/main.css',
+  'game/js/main.js',
+  'game/images/fish1_Left.png',
+  'game/images/fish1_Right.png',
+  'game/images/sprite1.jpg',
+  'game/images/sprite.jfif',
+  'game/images/sprite2.jfif',
+  'game/images/sprite3.jfif',
+  'game/images/sprite4.jfif',
+  'game/sound/moveSound.ogg',
+  'game/sound/wallSound.wav'
 ];
 
 //Install event
