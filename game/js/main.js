@@ -220,9 +220,14 @@
   }
 
   function drawScore() {
-    ctx.fillStyle = 'white';
-    ctx.font = '20px Verdana';
-    ctx.fillText('Score : ' + score, 780, 30);
+    
+    var gradient = ctx.createLinearGradient(0, 0, canvas.width,  0);
+    gradient.addColorStop("0", "magenta");
+    gradient.addColorStop("0.5", "blue");
+    gradient.addColorStop("1.0", "red");
+    //fill with gradient
+    ctx.fillStyle = gradient;
+    ctx.fillText('Score : ' + score, canvas.width / 6.5, canvas.height / 10);
   }
 
   function clearScore() {
