@@ -6,15 +6,14 @@
   const ctx = canvas.getContext('2d');
 
   /******************** SW register ********************/
-
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('/{https://niranjan-gurung.github.io}/sw_cached_pages.js', {scope: '/{https://niranjan-gurung.github.io}/'})
-        .then(reg => console.log('Service Worker: Registered!'))
-        .catch(err => console.log(`Service Worker: Error: ${err}`))
-    })
-  }
+  // if ('serviceWorker' in navigator) {
+  //   window.addEventListener('load', () => {
+  //     navigator.serviceWorker
+  //       .register('/{https://niranjan-gurung.github.io}/sw_cached_pages.js', {scope: '/{https://niranjan-gurung.github.io}/'})
+  //       .then(reg => console.log('Service Worker: Registered!'))
+  //       .catch(err => console.log(`Service Worker: Error: ${err}`))
+  //   })
+  // }
 
   /************** GLOBAL VARIABLES: **************/
   const cWidth = canvas.width;
