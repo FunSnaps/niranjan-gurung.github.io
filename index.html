@@ -25,8 +25,16 @@
     }
   </style>
 </head>
+
 <body>
   <h1>totally skybet</h1>
+
+  <script>
+    // register ServiceWorker, remember to use absolute path!
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.register('/{https://niranjan-gurung.github.io}/sw_cached_pages.js', { scope: '/{https://niranjan-gurung.github.io}/' })
+    }
+  </script>
 </body>
 
 </html>
