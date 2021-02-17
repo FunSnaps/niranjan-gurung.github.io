@@ -4,18 +4,18 @@
 const cacheName = 'V1';
 //collection of assets to be cached
 const cacheAssets = [
-  'game/index.html',
-  'game/css/main.css',
-  'game/js/main.js',
-  'game/images/fish1_Left.png',
-  'game/images/fish1_Right.png',
-  'game/images/sprite1.jpg',
-  'game/images/sprite.jfif',
-  'game/images/sprite2.jfif',
-  'game/images/sprite3.jfif',
-  'game/images/sprite4.jfif',
-  'game/sound/moveSound.ogg',
-  'game/sound/wallSound.wav'
+  '/{https://niranjan-gurung.github.io}/game/index.html',
+  '/{https://niranjan-gurung.github.io}/game/css/main.css',
+  '/{https://niranjan-gurung.github.io}/game/js/main.js',
+  '/{https://niranjan-gurung.github.io}/game/images/fish1_Left.png',
+  '/{https://niranjan-gurung.github.io}/game/images/fish1_Right.png',
+  '/{https://niranjan-gurung.github.io}/game/images/sprite1.jpg',
+  '/{https://niranjan-gurung.github.io}/game/images/sprite.jfif',
+  '/{https://niranjan-gurung.github.io}/game/images/sprite2.jfif',
+  '/{https://niranjan-gurung.github.io}/game/images/sprite3.jfif',
+  '/{https://niranjan-gurung.github.io}/game/images/sprite4.jfif',
+  '/{https://niranjan-gurung.github.io}/game/sound/moveSound.ogg',
+  '/{https://niranjan-gurung.github.io}/game/sound/wallSound.wav'
 ];
 
 //Install event
