@@ -4,8 +4,9 @@ const offlineUrl = [
   'offline.html',
   '/css/main.css',
   '/js/main.js',
-  '/images/sprite4.jpg',
-  '/sound/moveSound.ogg',
+  '/images/wallpaper1.jpg',
+  '/images/starlord_mask.png',
+  '/images/bgbattleship.png',
   '/sound/wallSound.wav'
 ];
 
