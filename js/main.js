@@ -133,9 +133,6 @@
   let enemySprite = new Image();
   enemySprite.src = 'images/bgbattleship.png';
 
-  // load audio:
-  const ping = new Audio('sound/wallSound.wav'); 
-
   const player = Player.createPlayer();
   let topEnemy = Enemy.createEnemy(downwards());
   let bottomEnemy = Enemy.createEnemy(upwards());
@@ -224,7 +221,7 @@
     //fill with gradient
     ctx.fillStyle = gradient;
     ctx.font = "30px Verdana";
-    const text = "Level Completed!";
+    const text = "Level Completed! Press ENTER to continue.";
     const textWidth = ctx.measureText(text).width;
     ctx.fillText(text, (cWidth/2) - (textWidth/2), cHeight/2);
   }
@@ -261,11 +258,9 @@
     //fill with gradient
     ctx.fillStyle = gradient;
     ctx.font = "25px Verdana";
-    const text = "Game Over! Your scored "+score+"! Press r to play again!";
+    const text = "Game Over! You scored "+score+"! Press r to play again!";
     const textWidth = ctx.measureText(text).width;
     ctx.fillText(text, (cWidth/2) - (textWidth/2), cHeight/2);
-
-    ping.play();
   }
   
   function drawScore() {
@@ -283,6 +278,11 @@
     score = 0;
   }
 
+  function playSound() {
+    let sound = document.getElementById('sound');
+    sound.play();
+  }
+
   /************** MAIN GAME LOOP: **************/
   function gameLoop() {
     if (running) {
@@ -292,6 +292,7 @@
       //gameFrame++;
       
       if (checkCollision()) {
+        playSound();
         gameOver();
         running = false;
       }
